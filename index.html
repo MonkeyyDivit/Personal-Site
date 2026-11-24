@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divit Sikand | Builder &amp; OS Tinkerer | WOSS Hack Club</title>
+<meta name="description" content="Portfolio of Divit Sikand, Grade 9 Pre-IB student at White Oaks Secondary School, applying to found WOSS Hack Club.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1128; --navy-2:#111d42; --white:#f4f6f9;
+  --silver:#b8c2cc; --silver-2:#8e9aaf;
+  --px:4px;
+  --display:'Silkscreen','Courier New',monospace;
+  --mono:'JetBrains Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{
+  background:var(--navy);color:var(--white);font:400 15px/1.7 var(--mono);
+  background-image:
+    linear-gradient(rgba(142,154,175,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(142,154,175,.08) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+a{color:inherit}
+:focus-visible{outline:2px dashed var(--white);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;letter-spacing:.02em}
+p{max-width:68ch}
+
+/* top status bar */
+.bar{position:sticky;top:0;z-index:20;background:var(--navy-2);border-bottom:2px solid var(--silver-2);font:400 12px var(--display)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;height:44px}
+.bar nav{display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{text-decoration:none;color:var(--silver);padding:4px 10px;border:2px solid transparent}
+.bar nav a:hover,.bar nav a.on{color:var(--navy);background:var(--silver);border-color:var(--silver)}
+.bar .st{color:var(--silver-2);white-space:nowrap}
+.bar .st i{display:inline-block;width:8px;height:8px;background:var(--white);margin-right:8px;animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+
+/* pixel-notched panel */
+.panel{
+  background:var(--navy-2);border:2px solid var(--silver-2);position:relative;
+  box-shadow:var(--px) var(--px) 0 var(--silver-2),calc(var(--px)*2) calc(var(--px)*2) 0 rgba(0,0,0,.45);
+}
+.win-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;background:var(--silver);color:var(--navy);font:700 12px var(--display);border-bottom:2px solid var(--silver-2)}
+.win-title .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctl{display:flex;gap:4px;flex:none}
+.ctl button{font:700 11px var(--display);background:var(--navy);color:var(--white);border:2px solid var(--navy);padding:0 6px;cursor:pointer;line-height:16px}
+.ctl button:hover{background:var(--white);color:var(--navy)}
+.win-body{padding:20px}
+
+/* buttons */
+.btn{display:inline-block;font:700 13px var(--display);text-decoration:none;padding:12px 18px;color:var(--navy);background:var(--white);border:2px solid var(--white);box-shadow:4px 4px 0 var(--silver-2);cursor:pointer;transition:transform .08s steps(2),box-shadow .08s steps(2)}
+.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--silver-2)}
+.btn:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--silver-2)}
+.btn.ghost{background:transparent;color:var(--white);border-color:var(--silver)}
+.btn.sm{font-size:11px;padding:7px 10px;box-shadow:3px 3px 0 var(--silver-2)}
+
+/* hero */
+.hero{padding:72px 0 80px}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.term{font:400 13px var(--mono);color:var(--silver);margin-bottom:22px;border-left:4px solid var(--silver-2);padding-left:12px;min-height:3.4em}
+.term b{color:var(--white);font-weight:600}
+.caret{display:inline-block;width:9px;height:1em;background:var(--white);vertical-align:-2px;animation:blink 1s steps(2) infinite}
+.hero h1{font-size:clamp(38px,7vw,72px);text-shadow:4px 4px 0 var(--silver-2);margin-bottom:22px}
+.hero p.sub{font-size:16px;color:var(--silver);margin-bottom:30px}
+.ctas{display:flex;flex-wrap:wrap;gap:16px}
+
+/* voxel computer */
+.stage{display:grid;place-items:center;height:340px;perspective:900px;cursor:grab;touch-action:pan-y}
+.stage:active{cursor:grabbing}
+.cube{--s:150px;width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;transform:rotateX(-24deg) rotateY(38deg)}
+.face{position:absolute;inset:0;border:2px solid var(--white);display:grid;place-items:center;font:700 11px var(--display);backface-visibility:visible}
+.face.f{transform:translateZ(75px);background:var(--navy);padding:10px;place-items:start;color:var(--white);line-height:1.5}
+.face.f span{display:block;white-space:nowrap}
+.face.b{transform:rotateY(180deg) translateZ(75px);background:var(--silver-2)}
+.face.r{transform:rotateY(90deg) translateZ(75px);background:var(--silver)}
+.face.l{transform:rotateY(-90deg) translateZ(75px);background:var(--silver-2)}
+.face.t{transform:rotateX(90deg) translateZ(75px);background:var(--white)}
+.face.d{transform:rotateX(-90deg) translateZ(75px);background:var(--navy-2)}
+.face.t,.face.r{background-image:linear-gradient(var(--navy) 2px,transparent 2px),linear-gradient(90deg,var(--navy) 2px,transparent 2px);background-size:25px 25px;opacity:.95}
+.mini{position:absolute;width:34px;height:34px;transform-style:preserve-3d}
+.mini i{position:absolute;inset:0;border:2px solid var(--white);background:var(--navy-2)}
+.mini i:nth-child(1){transform:translateZ(17px)}.mini i:nth-child(2){transform:rotateY(90deg) translateZ(17px);background:var(--silver)}
+.mini i:nth-child(3){transform:rotateX(90deg) translateZ(17px);background:var(--white)}.mini i:nth-child(4){transform:rotateY(180deg) translateZ(17px)}
+.mini i:nth-child(5){transform:rotateY(-90deg) translateZ(17px)}.mini i:nth-child(6){transform:rotateX(-90deg) translateZ(17px)}
+.m1{transform:translate3d(120px,100px,0)}.m2{transform:translate3d(-60px,100px,60px)}.m3{transform:translate3d(-40px,-130px,-40px)}
+.hint{text-align:center;color:var(--silver-2);font:400 11px var(--display);margin-top:6px}
+
+/* sections */
+section{padding:72px 0}
+.sec-h{display:flex;align-items:center;gap:16px;margin-bottom:36px}
+.sec-h h2{font-size:clamp(22px,4vw,32px)}
+.sec-h::after{content:"";flex:1;height:4px;background:repeating-linear-gradient(90deg,var(--silver-2) 0 8px,transparent 8px 16px)}
+
+.about{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:start}
+.about p+p{margin-top:14px}
+.about p{color:var(--silver)}
+.about strong{color:var(--white);font-weight:600}
+.specs{display:grid;gap:0;list-style:none}
+.specs li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:2px dotted var(--silver-2);font-size:13px}
+.specs li:last-child{border:0}
+.specs span:first-child{color:var(--silver-2)}
+.specs span:last-child{text-align:right}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.tag{font:700 11px var(--display);padding:5px 8px;border:2px solid var(--silver);color:var(--silver);clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px))}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:36px}
+.proj.wide{grid-column:1/-1}
+.proj .win-body{display:flex;flex-direction:column;gap:14px}
+.proj h3{font-size:16px}
+.proj p{color:var(--silver);font-size:14px}
+.proj .meta{font-size:12px;color:var(--silver-2)}
+.proj .acts{display:flex;gap:12px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+.proj.min .win-body{display:none}
+.proj.max{box-shadow:var(--px) var(--px) 0 var(--white),calc(var(--px)*2) calc(var(--px)*2) 0 rgba(0,0,0,.45)}
+.proj{transition:transform .1s steps(2)}
+.proj:hover{transform:translate(-2px,-2px)}
+
+.readme .win-body{font-size:14px;color:var(--silver)}
+.readme h3{color:var(--white);font-size:15px;margin:22px 0 8px}
+.readme h3:first-child{margin-top:0}
+.readme ul{list-style:none}
+.readme li{padding-left:22px;position:relative;margin:6px 0}
+.readme li::before{content:"[+]";position:absolute;left:0;color:var(--white)}
+.readme code{color:var(--white);background:var(--navy);padding:1px 6px;border:1px solid var(--silver-2)}
+
+.side{display:grid;gap:28px}
+.photo img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;image-rendering:auto;border-bottom:0}
+dialog{margin:auto;width:min(860px,92vw);background:var(--navy-2);color:var(--white);border:2px solid var(--silver-2);box-shadow:6px 6px 0 var(--silver-2);padding:0}
+dialog::backdrop{background:rgba(10,17,40,.88)}
+dialog video{display:block;width:100%;max-height:70vh;background:#000}
+footer{border-top:2px solid var(--silver-2);background:var(--navy-2);padding:36px 0 28px;margin-top:40px}
+.links{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.status{font:400 12px var(--display);color:var(--silver-2)}
+.status b{color:var(--white)}
+
+@media (max-width:820px){
+  .hero .wrap,.about,.grid{grid-template-columns:1fr}
+  .bar .st{display:none}
+  .stage{height:300px}
+  .hero{padding-top:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <nav aria-label="Primary">
+      <a href="#top" class="on">HOME</a>
+      <a href="#about">ABOUT</a>
+      <a href="#projects">PROJECTS</a>
+      <a href="#vision">VISION</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+    <span class="st"><i></i>SYS_OK // OAKVILLE_ON</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <div class="term" aria-label="Terminal header">
+          <span id="typed"></span><span class="caret"></span>
+        </div>
+        <h1>DIVIT SIKAND</h1>
+        <p class="sub">Builder, OS tinkerer, and developer at White Oaks Secondary School—applying to launch WOSS Hack Club.</p>
+        <div class="ctas">
+          <a class="btn" href="#projects">EXPLORE_PROJECTS</a>
+          <a class="btn ghost" href="#vision">CHAPTER_VISION</a>
+        </div>
+      </div>
+      <div>
+        <div class="stage" id="stage" aria-label="Interactive 3D voxel computer. Drag to rotate.">
+          <div class="cube" id="cube">
+            <div class="face f"><span>&gt; boot arch</span><span>&gt; nvram ok</span><span>&gt; ship it_</span></div>
+            <div class="face b"></div><div class="face r"></div><div class="face l"></div>
+            <div class="face t"></div><div class="face d"></div>
+            <div class="mini m1"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="mini m2"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="mini m3"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <p class="hint">[ DRAG TO ROTATE ]</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-h"><h2>ABOUT_ME</h2></div>
+      <div class="about">
+        <div>
+          <p>I am a Grade 9 Pre-IB student who likes taking things apart and getting them to run again. I am most at home in <strong>low-level systems tinkering</strong>, from bootloaders to firmware settings, and I also build <strong>mobile and web apps</strong>.</p>
+          <p>I practise <strong>competitive programming</strong> and math, and I believe the fastest way to learn is to teach someone else, so <strong>peer-led learning</strong> is how I like to work.</p>
+          <p>I am active in the <strong>Hack Club Slack</strong> community, including the 12-week <strong>Terra</strong> coding program and the <strong>Stardance</strong> summer challenge. I have also completed coursework from <strong>Harvard&rsquo;s CS50</strong>.</p>
+          <div class="tags">
+            <span class="tag">HACK_CLUB</span><span class="tag">TERRA</span><span class="tag">STARDANCE</span><span class="tag">CS50</span>
+          </div>
+        </div>
+        <div class="side">
+          <div class="panel photo">
+            <div class="win-title"><span class="name">DIVIT_SIKAND.img</span></div>
+            <img id="me" src="Photo_DivitSikand.jpeg" alt="Photo of Divit Sikand" width="400" height="400">
+          </div>
+          <div class="panel">
+          <div class="win-title"><span class="name">SYSTEM_SPECS.exe</span><span class="ctl"><button tabindex="-1" aria-hidden="true">X</button></span></div>
+          <div class="win-body">
+            <ul class="specs">
+              <li><span>OS</span><span>Arch Linux &amp; NVRAM</span></li>
+              <li><span>MOBILE</span><span>Swift (iOS)</span></li>
+              <li><span>GAMES</span><span>Luau (Roblox Studio)</span></li>
+              <li><span>WEB</span><span>HTML / CSS / JS</span></li>
+              <li><span>CORE</span><span>Python &amp; C</span></li>
+              <li><span>AI</span><span>AI APIs (Gemini)</span></li>
+            </ul>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-h"><h2>PROJECTS</h2></div>
+      <div class="grid">
+
+        <article class="panel proj wide">
+          <div class="win-title"><span class="name">arch_macbook_2011.sh</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+          <div class="win-body">
+            <h3>Arch Linux on a Late-2011 MacBook Pro</h3>
+            <p>Installed and configured Arch Linux from scratch on legacy Apple hardware. I set NVRAM variables by hand to control boot behaviour, then fixed the post-install Wi-Fi driver and bootloader configuration to get a fully working daily-driver Linux setup.</p>
+            <div class="tags"><span class="tag">ARCH</span><span class="tag">NVRAM</span><span class="tag">BOOTLOADER</span><span class="tag">DRIVERS</span></div>
+            <div class="acts"><a class="btn sm ghost" href="#">[ SOURCE_CODE ]</a><a class="btn sm" href="#">[ VIEW_DEMO ]</a></div>
+          </div>
+        </article>
+
+        <article class="panel proj">
+          <div class="win-title"><span class="name">ai_assistant.swift</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+          <div class="win-body">
+            <h3>Custom &ldquo;Apple Intelligence&rdquo; iOS Lookalike</h3>
+            <p>An iOS assistant modelled on Apple Intelligence. The native UI is written in Swift, and the intelligence runs on the Gemini API (gemini-3.1-flash-lite). Built across three devices: developed on my laptop, compiled in Xcode on a MacBook, then sideloaded onto my iPhone.</p>
+            <div class="tags"><span class="tag">SWIFT</span><span class="tag">GEMINI</span><span class="tag">XCODE</span></div>
+            <div class="acts"><a class="btn sm ghost" href="#">[ SOURCE_CODE ]</a><button type="button" class="btn sm" id="openDemo">[ VIEW_DEMO ]</button></div>
+          </div>
+        </article>
+
+        <article class="panel proj">
+          <div class="win-title"><span class="name">launcher_game.luau</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+          <div class="win-body">
+            <h3>Roblox Physics &amp; Launcher Game</h3>
+            <p>A multiplayer Roblox experience scripted in Luau. It has custom slingshot and projectile mechanics, mid-air boosts, magnetic rings, and persistent global leaderboards (LeaderstatsData, GlobalLeaderboardServer).</p>
+            <div class="tags"><span class="tag">LUAU</span><span class="tag">PHYSICS</span><span class="tag">MULTIPLAYER</span></div>
+            <div class="acts"><a class="btn sm ghost" href="#">[ SOURCE_CODE ]</a><a class="btn sm" href="#">[ VIEW_DEMO ]</a></div>
+          </div>
+        </article>
+
+        <article class="panel proj">
+          <div class="win-title"><span class="name">forgecraft_tariff.html</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+          <div class="win-body">
+            <h3>ForgeCraft-3D &amp; TariffTrack</h3>
+            <p>ForgeCraft-3D is an interactive 3D web platform with custom HTML/CSS architecture. TariffTrack is a mobile app that tracks and visualizes tariff data.</p>
+            <div class="tags"><span class="tag">HTML/CSS</span><span class="tag">3D WEB</span><span class="tag">MOBILE</span></div>
+            <div class="acts"><a class="btn sm ghost" href="#">[ SOURCE_CODE ]</a><a class="btn sm" href="#">[ VIEW_DEMO ]</a></div>
+          </div>
+        </article>
+
+        <article class="panel proj">
+          <div class="win-title"><span class="name">cs50_and_contests.py</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+          <div class="win-body">
+            <h3>CS50 &amp; Competitive Math / Programming</h3>
+            <p>Algorithmic problem sets submitted through GitHub, alongside preparation for Canadian Mathematical Society contests (COMC, CLMC) and practice on WMOJ.</p>
+            <div class="tags"><span class="tag">PYTHON</span><span class="tag">C</span><span class="tag">COMC</span><span class="tag">WMOJ</span></div>
+            <div class="acts"><a class="btn sm ghost" href="#">[ SOURCE_CODE ]</a><a class="btn sm" href="#">[ VIEW_DEMO ]</a></div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="vision">
+    <div class="wrap">
+      <div class="sec-h"><h2>CHAPTER_VISION</h2></div>
+      <article class="panel readme proj" style="max-width:820px">
+        <div class="win-title"><span class="name">README.md // WOSS_HACK_CLUB</span><span class="ctl"><button data-act="min" aria-label="Minimize">_</button><button data-act="max" aria-label="Maximize">&#9633;</button><button data-act="min" aria-label="Collapse">X</button></span></div>
+        <div class="win-body">
+          <h3># WHY WOSS NEEDS A HACK CLUB</h3>
+          <p>Most of what I know came from building things with other people online. I want every student at White Oaks to have that same chance, in person, down the hall.</p>
+          <h3>## WHAT WE WILL DO</h3>
+          <ul>
+            <li>Build a welcoming, hands-on maker culture where <code>every</code> experience level belongs.</li>
+            <li>Ship real hardware and software projects, every week.</li>
+            <li>Run mini-hackathons at school, from a single lunch hour to a full day.</li>
+            <li>Pair newer members with experienced ones for peer-led learning.</li>
+            <li>Connect WOSS to the global Hack Club community and its programs.</li>
+          </ul>
+          <h3>## FIRST STEPS</h3>
+          <p>Find a teacher sponsor, set a weekly meeting slot, and open with a beginner-friendly build night so anyone can walk in and leave with something working.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<dialog id="demo" aria-label="Apple Intelligence lookalike demo video">
+  <div class="win-title"><span class="name">Demo_AppleIntelligence</span><span class="ctl"><button type="button" id="closeDemo" aria-label="Close demo">X</button></span></div>
+  <video id="demoVid" controls playsinline preload="none">
+    <source src="Demo_AppleIntelligence.mp4" type="video/mp4">
+    <source src="Demo_AppleIntelligence.mov" type="video/quicktime">
+    <source src="Demo_AppleIntelligence.webm" type="video/webm">
+  </video>
+</dialog>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="links">
+      <a class="btn sm ghost" href="https://github.com/MonkeyyDivit" target="_blank" rel="noopener">GITHUB</a>
+      <a class="btn sm ghost" href="https://hackclub.com/slack/" target="_blank" rel="noopener">HACK_CLUB_SLACK</a>
+      <a class="btn sm ghost" href="https://discord.com/users/1550905391230222390" target="_blank" rel="noopener">DISCORD</a>
+      <a class="btn sm ghost" href="mailto:1sikanddiv@hdsb.ca">EMAIL</a>
+    </div>
+    <p class="status"><b>SYSTEM_READY</b> // BUILT IN OAKVILLE, ON</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Terminal typing
+  var txt='> USER: DIVIT_SIKAND // WOSS_GRADE_9', out=document.getElementById('typed'), i=0;
+  if(reduce){out.textContent=txt}else{(function t(){out.textContent=txt.slice(0,++i);if(i<txt.length)setTimeout(t,45)})()}
+
+  // Voxel cube: auto-rotate, drag or mouse to tilt
+  var cube=document.getElementById('cube'),stage=document.getElementById('stage');
+  var rx=-24,ry=38,drag=false,lx=0,ly=0,hover=false;
+  function paint(){cube.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)'}
+  function loop(){if(!drag&&!hover&&!reduce){ry+=.35;paint()}requestAnimationFrame(loop)}
+  stage.addEventListener('pointerdown',function(e){drag=true;lx=e.clientX;ly=e.clientY;stage.setPointerCapture(e.pointerId)});
+  stage.addEventListener('pointermove',function(e){
+    if(!drag)return;
+    ry+=(e.clientX-lx)*.6;rx=Math.max(-70,Math.min(70,rx-(e.clientY-ly)*.6));
+    lx=e.clientX;ly=e.clientY;paint();
+  });
+  stage.addEventListener('pointerup',function(){drag=false});
+  stage.addEventListener('pointercancel',function(){drag=false});
+  stage.addEventListener('mouseenter',function(){hover=true});
+  stage.addEventListener('mouseleave',function(){hover=false});
+  paint();loop();
+
+  // Window controls: minimize / maximize
+  document.querySelectorAll('.proj .ctl button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var w=b.closest('.proj');
+      if(b.dataset.act==='min'){w.classList.toggle('min')}
+      else{w.classList.toggle('max');w.classList.remove('min')}
+    });
+  });
+
+  // Photo: try common extensions until one loads
+  var me=document.getElementById('me'),exts=['jpeg','jpg','JPEG','JPG','png','PNG','webp'],ei=0;
+  function nextPhoto(){if(++ei<exts.length)me.src='Photo_DivitSikand.'+exts[ei]}
+  me.addEventListener('error',nextPhoto);
+  // The first load can fail before this script runs, so check it now too
+  if(me.complete&&me.naturalWidth===0)nextPhoto();
+
+  // Demo video dialog
+  var dlg=document.getElementById('demo'),vid=document.getElementById('demoVid');
+  document.getElementById('openDemo').addEventListener('click',function(){dlg.showModal();vid.load();vid.play().catch(function(){})});
+  function closeDemo(){vid.pause();dlg.close()}
+  document.getElementById('closeDemo').addEventListener('click',closeDemo);
+  dlg.addEventListener('click',function(e){if(e.target===dlg)closeDemo()});
+  dlg.addEventListener('close',function(){vid.pause()});
+
+  // Smooth scroll (with offset handled by scroll-padding-top)
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=a.getAttribute('href');if(id.length<2)return;
+      var el=document.querySelector(id);if(!el)return;
+      e.preventDefault();
+      el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+      history.replaceState(null,'',id);
+    });
+  });
+
+  // Active nav link
+  var links=document.querySelectorAll('.bar nav a');
+  var map={top:links[0],about:links[1],projects:links[2],vision:links[3],contact:links[4]};
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){links.forEach(function(l){l.classList.remove('on')});(map[e.target.id]||links[0]).classList.add('on')}
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  ['top','about','projects','vision','contact'].forEach(function(id){var n=document.getElementById(id);if(n)io.observe(n)});
+})();
+</script>
+</body>
+</html>
